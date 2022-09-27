@@ -1,0 +1,86 @@
+
+/****************************
+ *                          *
+ *  PHP Project Finder CSS  *
+ *                          *
+ ****************************/
+
+table#projectListResults thead th,
+table#projectListResults tbody td {
+    text-align: center;
+}
+
+table#projectListResults tbody tr td {
+    cursor: pointer;
+}
+
+table tbody tr td.empty-table {
+    padding: 8px;
+    text-align: center;
+}
+
+div#project_detail_modal .modal-header span.modal-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+div#project_detail_modal .modal-header a.close {
+    font-size: 1rem;
+}
+
+div#project_detail_modal .modal-body {
+    padding: 8px 12px;
+    min-height: 400px;
+}
+
+div#project_detail_modal .modal-body table td.noWrap {
+    white-space: nowrap;
+}
+
+div#projectListContainer span#launch_update_request {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+div#projectListContainer span#last_update_timestamp {
+    display: none;
+}
+
+div#projectListContainer div#info-msg-container {
+    display: none;
+    margin-top: 1rem;
+    margin-bottom: 0px;
+    text-align: center;
+}
+
+div#projectListContainer div#info-msg-container button.close {
+    padding: 0px;
+    top: 1px;
+    right: 1px;
+}
+
+div.modal_overlay {
+    display: none;
+    position: absolute;
+    top: 10px;
+    left: 0;
+    height: 98%;
+    width: 100%;
+    z-index: 10001;
+    text-align: center;
+    background: #FFF; /* fallback */
+    background: rgba(255,255,255,0.75);
+}
+
+.align-left {
+    text-align: left;
+}
+
+.align-center {
+    text-align: center;
+}
+
+.align-right {
+    text-align: right;
+}
