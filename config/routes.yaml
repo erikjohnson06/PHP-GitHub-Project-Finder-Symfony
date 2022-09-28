@@ -1,3 +1,19 @@
 index:
     path: /
     controller: App\Controller\ProjectFinderController::index
+
+ajaxTest:
+    path: /ajaxTest
+    controller: App\Controller\ProjectFinderController::ajaxTest
+       
+project_finder_get_project_list:
+    path: /getProjectList
+    controller: App\Controller\ProjectFinderController::getProjectList
+    
+project_finder_get_project_detail:
+    path: /getProjectListDetail
+    controller: App\Controller\ProjectFinderController::getProjectListDetail
+    
+project_finder_load_github_projects:
+    path: /loadGitHubProjects
+    controller: App\Controller\ProjectFinderController::loadGitHubProjects

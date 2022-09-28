@@ -43,7 +43,7 @@
          * @returns {void}
          */
         getProjectListData : function(){
-            
+                        
             var self = this;
             var table = jQuery("table#projectListResults");
 
@@ -55,9 +55,9 @@
 
             jQuery.ajax({
                 type : "GET",
-                url : "ProjectFinderJS/getProjectListData", 
+                url : self.baseUrl + "getProjectList",//  "ProjectFinderJS/getProjectListData", 
                 data : {
-                    [self.csrfToken] : self.csrfHash
+                    id : "test"
                 },
                 dataType : 'json',
                 cache : false,
@@ -73,7 +73,9 @@
                     }
                 },
                 success : function (results){
-                                                   
+                                    
+                    console.log(results);
+                    
                     if (results.error){
                         displayMessage("<i class='fa fa-exclamation-triangle'></i> &nbsp;&nbsp; Error: " + results.error_msg, "error", true);
                         return false;
@@ -116,10 +118,9 @@
             
             jQuery.ajax({
                 type : "GET",
-                url : "ProjectFinderJS/getProjectListDetail", 
+                url : self.baseUrl + "getProjectListDetail", //"ProjectFinderJS/getProjectListDetail", 
                 data : {
-                    repo_id : id,
-                    [self.csrfToken] : self.csrfHash
+                    repo_id : id
                 },
                 dataType : 'json',
                 cache : false,
@@ -183,10 +184,8 @@
 
             jQuery.ajax({
                 type : "POST",
-                url : "ProjectFinderJS/loadGitHubProjects",
-                data : {
-                    [self.csrfToken] : self.csrfHash
-                },
+                url : self.baseUrl + "loadGitHubProjects", //"ProjectFinderJS/loadGitHubProjects",
+                data : {},
                 dataType : 'json',
                 cache : false,
                 beforeSend: function (){

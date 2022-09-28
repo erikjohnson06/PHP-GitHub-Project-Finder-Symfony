@@ -13,7 +13,7 @@
     <title>{% block title %}Project{% endblock %}</title>
     
     {% block stylesheets %}
-    
+        
         <!-- Bootstrap Core CSS -->
         <link href="{{ asset('assets/plugins/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
         <!-- Font Awesome CSS -->
@@ -24,8 +24,6 @@
         <link href="{{ asset('assets/plugins/c3-master/c3.min.css') }}" rel="stylesheet">
         <!-- Custom CSS -->
         <link href="{{ asset('css/style.css') }}" rel="stylesheet">
-        <!-- Project Finder CSS -->
-        <link href="{{ asset('css/ProjectFinder.min.css') }}" rel="stylesheet">
         <!-- You can change the theme colors from here -->
         <link href="{{ asset('css/colors/blue.css') }}" id="theme" rel="stylesheet">
     
@@ -104,9 +102,9 @@
         <!-- ============================================================== -->
         <!-- End Topbar header -->
         <!-- ============================================================== -->
-
-        {{ include('sidebar.html.twig') }}
-            
+        
+        {% block sidebar %}{% endblock %}
+        
         {% block content %}{% endblock %}
 
     </div>
@@ -114,7 +112,7 @@
     <!-- End Main Wrapper -->
     <!-- ============================================================== -->
     
-    {% block scripts_js %}
+    {% block javascripts %}
     
         <!-- ============================================================== -->
         <!-- All Jquery -->
