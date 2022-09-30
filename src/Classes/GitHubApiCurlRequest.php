@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Libraries;
+namespace App\Classes;
 
 class GitHubApiCurlRequest 
 {
@@ -16,28 +16,28 @@ class GitHubApiCurlRequest
      * 
      * @var string
      */
-    private $url = "https://api.github.com/search/repositories?q=language:php&sort=stars&order=desc"; 
+    private string $url = "https://api.github.com/search/repositories?q=language:php&sort=stars&order=desc"; 
     
     /**
      * @var string
      */
-    private $user_agent = "";
+    private string $user_agent = "";
     
     /**
      * @var string
      */
-    private $error_msg = "";
+    private string $error_msg = "";
     
     /**
      * @var int
      */
-    private $page_number = 1;
+    private int $page_number = 1;
     
     /**
      * Max = 100
      * @var int
      */
-    private $per_page = 100;
+    private int $per_page = 100;
     
     /**
      * @var CurlHandle
@@ -147,7 +147,7 @@ class GitHubApiCurlRequest
             }
         } catch (\Exception $ex) {
             $this->error_msg = "Error submitting cURL Request: " . $ex->getMessage();
-            log_message("error", $this->error_msg);
+            //log_message("error", $this->error_msg);
         }
         
         return false;

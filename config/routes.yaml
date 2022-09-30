@@ -1,10 +1,6 @@
 index:
     path: /
     controller: App\Controller\ProjectFinderController::index
-
-ajaxTest:
-    path: /ajaxTest
-    controller: App\Controller\ProjectFinderController::ajaxTest
        
 project_finder_get_project_list:
     path: /getProjectList

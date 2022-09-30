@@ -56,9 +56,7 @@
             jQuery.ajax({
                 type : "GET",
                 url : self.baseUrl + "getProjectList",//  "ProjectFinderJS/getProjectListData", 
-                data : {
-                    id : "test"
-                },
+                data : {},
                 dataType : 'json',
                 cache : false,
                 //contentType: 'application/x-www-form-urlencoded; charset=UTF-8',

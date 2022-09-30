@@ -39,6 +39,58 @@ class GitHubRepositoryRecordRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * @return GitHubRepositoryRecord[] Returns an array of GitHubRepositoryRecord objects
+     */
+    public function getProjectList(): array
+    {
+        return $this->createQueryBuilder('g')
+            ->orderBy('g.stargazers_count', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+    
+    /**
+     * Fetch the project detail based on a given repository Id
+     * 
+     * @param int $value
+     * @return GitHubRepositoryRecord|null
+     */
+    public function findOneByRepositoryId(int $value): ?GitHubRepositoryRecord
+    {
+        return $this->createQueryBuilder('g')
+            ->andWhere('g.repository_id = :val')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+    
+
+    public function getProjectListRecordCount() : int {
+        
+        $count = 0;
+        
+        try {
+            
+            $query = $this->getEntityManager()->createQuery(
+                "SELECT count(g.id) AS cnt FROM App\Entity\GitHubRepositoryRecord g"
+            );
+
+            $results = $query->getResult(); //Returns DateTime object, if found
+                        
+            if ($results && isset($results[0]['cnt'])){
+                $count = (int) $results[0]['cnt'];
+            }
+        } 
+        catch (\Exception $ex) {
+            //$this->error_msg = "Request Manager Error: " . $ex->getMessage();
+            //log_message("error", $this->error_msg);
+        }
+        
+        return $count;
+    }
+    
+    
 //    /**
 //     * @return GitHubRepositoryRecord[] Returns an array of GitHubRepositoryRecord objects
 //     */

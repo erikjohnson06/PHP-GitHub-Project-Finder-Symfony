@@ -6,7 +6,10 @@ use App\Repository\GitHubRepositoryRecordRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
 #[ORM\Entity(repositoryClass: GitHubRepositoryRecordRepository::class)]
+#[UniqueEntity('repository_id')]
 class GitHubRepositoryRecord
 {
     #[ORM\Id]
@@ -14,7 +17,7 @@ class GitHubRepositoryRecord
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
+    #[ORM\Column(unique: true)]
     private ?int $repository_id = null;
 
     #[ORM\Column(length: 255)]
