@@ -4,10 +4,10 @@ Author: Erik Johnson
 ## Instructions for Setting Up 
 In order to get this site to work in your local environment, follow these instructions: 
 
-1. Copy this repository into your web root directory. If copying to a subfolder, you will need to update the server configuration files (DocumentRoot in httpd.conf or httpd-vhosts.conf, if using Apache)
+1. Copy this repository into your web root directory. You may need to update the server configuration files and set the "public" folder as DocumentRoot (located in httpd.conf or httpd-vhosts.conf, if using Apache).
 
 2. Database setup: this will require importing the .sql file found within the root of the repository. Look for "project_finder_v2_symfony.sql" file. 
-Importing this file will create a test database in your local MySQL server named "project_finder_erikjohnson_symfony", as well as three tables to manage 
+Importing this file will create a test database in your local MySQL server named "project_finder_erikjohnson_symfony", as well as the tables to manage 
 the application's repository and Doctrine migration data. These tables may include sample data already, but feel free to truncate them and start over. Passwords may 
 need to be adjusted to your local MySQL settings. To adjust the credentials, edit the DATABASE_URL property contained in the ".env" or ".env.local" settings file, 
 located at the root directory. 
