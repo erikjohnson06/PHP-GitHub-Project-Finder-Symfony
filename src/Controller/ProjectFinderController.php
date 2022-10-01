@@ -6,28 +6,21 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-//use App\Classes\ReturnPayload;
-//use App\Classes\GitHubRepositoryRecordJS;
-//use App\Classes\GitHubRepositoryRecordDetailJS;
-//use App\Classes\GitHubApiCurlRequest;
+
 use App\Entity\GitHubRepositoryRecord;
 use App\Entity\GitHubProjectsRequestManager;
-use App\Repository\GitHubRepositoryRecordRepository;
-use App\Repository\GitHubProjectsRequestManagerRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\ORM\NonUniqueResultException;
 
-use App\Classes\AutoLoader;
+//Include custom classes for this project - the AutoLoader would be ideal here, but was not working as expected with the correct namespaces
+use App\Classes\ReturnPayload;
+use App\Classes\GitHubRepositoryRecordJS;
+use App\Classes\GitHubRepositoryRecordDetailJS;
+use App\Classes\GitHubApiCurlRequest;
+//use App\Classes\AutoLoader;
 
 use DateTime;
-use stdClass;
 
-//use Monolog\Level;
-//use Monolog\Logger;
-//use Monolog\Handler\StreamHandler;
-//use Monolog\Handler\FirePHPHandler;
-//use Monolog\Formatter\LineFormatter;
-
+//Include basic PSR Logger 
 use Psr\Log\LoggerInterface;
 
 class ProjectFinderController extends AbstractController {
@@ -35,24 +28,7 @@ class ProjectFinderController extends AbstractController {
     private LoggerInterface $logger;
     
     public function __construct(LoggerInterface $logger)
-    {        
-        /*
-        $dateFormat = "Y n j, g:i a";
-        $output = "%datetime% > %level_name% > %message% \n";
-        $formatter = new LineFormatter($output, $dateFormat);
-        
-        $stream = new StreamHandler(__DIR__.'/project_finder.log', Level::Debug);
-        //$firephp = new FirePHPHandler();
-        
-        $stream->setFormatter($formatter);
-        
-        $this->logger = new Logger('project_log');
-        $this->logger->pushHandler($stream);
-        //$this->logger->pushHandler($firephp);
-        
-        $this->logger->debug("this is a test message");
-        */
-        
+    {                
         $this->logger = $logger;
     }  
     
@@ -76,17 +52,15 @@ class ProjectFinderController extends AbstractController {
             throw new BadRequestHttpException();
         }
         
-        $data = new \App\Classes\ReturnPayload();
-        $data->data = new stdClass();
+        $data = new ReturnPayload();
+        $data->data = new \stdClass();
         $data->data->project_data = null;
         $data->data->last_updated = null;
-        
-        $this->logger->debug(realpath(__DIR__) . DIRECTORY_SEPARATOR);
-        
+                
         $entityManager = $doctrine->getManager();
         
-        $records = $entityManager->getRepository(GitHubRepositoryRecord::class)->getProjectList();
-        $update_time = $entityManager->getRepository(GitHubProjectsRequestManager::class)->getLastUpdateTime(); //getLastUpdateTime();
+        $records = $entityManager->getRepository(GitHubRepositoryRecord::class)->getProjectList(); //Yields an iterator for better memory usage
+        $update_time = $entityManager->getRepository(GitHubProjectsRequestManager::class)->getLastUpdateTime();
         
         if ($records){
             
@@ -103,6 +77,7 @@ class ProjectFinderController extends AbstractController {
             }
         }
         
+        //Fetch the last update time
         if ($update_time){
             $data->data->last_updated = $update_time;
         }
@@ -126,7 +101,7 @@ class ProjectFinderController extends AbstractController {
         }
         
         $data = new ReturnPayload();
-        $data->data = new stdClass();
+        $data->data = new \stdClass();
         
         $repo_id = (int) $request->query->get("repo_id", 0);
         
@@ -135,16 +110,12 @@ class ProjectFinderController extends AbstractController {
             $data->error_msg = "Invalid repository";
             return new JsonResponse($data);
         }
-
-        $this->logger->info(print_r($repo_id, true));
         
         try {
             
             $entityManager = $doctrine->getManager();
 
             $record = $entityManager->getRepository(GitHubRepositoryRecord::class)->findOneByRepositoryId($repo_id);
-
-            $this->logger->info(print_r($record, true));
 
             if ($record){
 
@@ -165,12 +136,10 @@ class ProjectFinderController extends AbstractController {
                 }
             }
         } 
-        catch (Exception | Doctrine\ORM\NonUniqueResultException  $ex) {
+        catch (Exception | Doctrine\ORM\NonUniqueResultException $ex) {
             $this->logger->error($ex->getMessage());
         }
-                
-        $this->logger->info(print_r($data->data->project_data, true));
-        
+
         return new JsonResponse($data);
     }
     
@@ -191,7 +160,7 @@ class ProjectFinderController extends AbstractController {
         }
         
         $data = new ReturnPayload();
-        $data->data = new stdClass();
+        $data->data = new \stdClass();
         $data->data->project_data = null;
         $data->data->last_updated = null;
 
@@ -288,7 +257,7 @@ class ProjectFinderController extends AbstractController {
                     $record->setCreatedAt($create_dt);
                     $record->setPushedAt($pushed_dt);
                                         
-                    //Save the repository record for an update
+                    //Prepare the repository record for an update
                     $entityManager->persist($record);
                 }
 
@@ -309,11 +278,15 @@ class ProjectFinderController extends AbstractController {
             $this->logger->error($data->error_msg);
         }
         finally {
-            $curl->close_cURL(); //Close the connection
+            
+            //Close the cURL connection
+            $curl->close_cURL(); 
+            
+            //Mark the request manager as complete 
             $entityManager->getRepository(GitHubProjectsRequestManager::class)->updateRequestManager(false, $data->error_msg);
         }
 
-        //After cURL request and update is complete, return an updated list of projects
+        //After cURL request and update is complete, return an updated list of projects. 
         $records = $entityManager->getRepository(GitHubRepositoryRecord::class)->getProjectList();
         $update_time = $entityManager->getRepository(GitHubProjectsRequestManager::class)->getLastUpdateTime();
         
@@ -323,7 +296,7 @@ class ProjectFinderController extends AbstractController {
             
             foreach ($records as $record){
                 
-                $obj = new GitHubRepositoryRecordJS; //Use JS version of class for updating JS data
+                $obj = new GitHubRepositoryRecordJS; //Use custom JS version of class for updating JS data
                 $obj->name = $record->getName();
                 $obj->repository_id = $record->getRepositoryId();
                 $obj->stargazers_count = $record->getStargazersCount();
@@ -343,9 +316,7 @@ class ProjectFinderController extends AbstractController {
             $updated_count = count($data->data->project_data);
             
             $diff = ($updated_count - $initial_count);
-            
-            $this->logger->info("diff :" . $diff);
-            
+                        
             //If this is the initial upload, simply state the number of records found.
             if (!$initial_count){
                 $data->data->success_msg .= "Uploaded " . $updated_count . " projects.";

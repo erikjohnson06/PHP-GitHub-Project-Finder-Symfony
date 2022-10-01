@@ -16,8 +16,7 @@
      */
     var ProjectFinder = {
                 
-        csrfHash : "",
-        csrfToken : "",
+        baseUrl : "", 
         
         eventListenersLoaded : false, 
         initialLoadComplete : false, 
@@ -29,10 +28,15 @@
          * @returns {void}
          */
         initialize : function(){
-                        
+                                            
             //Register event listenters
             addHandlers();
-            
+
+            //Shim to handle the routing issue encountered when index.php is omitted from URL. Required for Ajax requests.
+            if (this.baseUrl && this.baseUrl === "/"){
+                this.baseUrl += "index.php/";
+            }
+                        
             //Retrieve projects list
             this.getProjectListData();
         },
@@ -55,20 +59,12 @@
 
             jQuery.ajax({
                 type : "GET",
-                url : self.baseUrl + "getProjectList",//  "ProjectFinderJS/getProjectListData", 
+                url : self.baseUrl + "getProjectList",
                 data : {},
                 dataType : 'json',
                 cache : false,
-                //contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
-                //headers: {'X-Requested-With': 'XMLHttpRequest', "X-CSRF-TOKEN" : self.csrfHash},
                 complete : function (results){
-                    
                     self.initialLoadComplete = true;
-                    
-                    //Update CSRF token
-                    if (typeof results.responseJSON.data.token !== "undefined"){
-                        self.csrfHash = results.responseJSON.data.token;
-                    }
                 },
                 success : function (results){
                                     
@@ -116,7 +112,7 @@
             
             jQuery.ajax({
                 type : "GET",
-                url : self.baseUrl + "getProjectListDetail", //"ProjectFinderJS/getProjectListDetail", 
+                url : self.baseUrl + "getProjectListDetail",
                 data : {
                     repo_id : id
                 },
@@ -125,13 +121,6 @@
                 beforeSend : function (){
                     body.html("<div class='modal_overlay' style='display: block;'><i class='fas fa-spinner fa-spin'></i></div>");
                     modal.modal("show");
-                },
-                complete : function (results){
-                                        
-                    //Update CSRF token
-                    if (typeof results.responseJSON.data.token !== "undefined"){
-                        self.csrfHash = results.responseJSON.data.token;
-                    }
                 },
                 success : function (results){
                     
@@ -182,7 +171,7 @@
 
             jQuery.ajax({
                 type : "POST",
-                url : self.baseUrl + "loadGitHubProjects", //"ProjectFinderJS/loadGitHubProjects",
+                url : self.baseUrl + "loadGitHubProjects",
                 data : {},
                 dataType : 'json',
                 cache : false,
@@ -190,13 +179,7 @@
                     displayMessage("<i class='fas fa-spinner fa-spin'></i> &nbsp;&nbsp; Working.. This may take a few moments.", "info");
                 },
                 complete : function (results){
-                                     
-                    self.loadProcessRunning = false;
-                    
-                    //Update CSRF token
-                    if (typeof results.responseJSON.data.token !== "undefined"){
-                        self.csrfHash = results.responseJSON.data.token;
-                    }                    
+                    self.loadProcessRunning = false;                 
                 },
                 success : function (results){
 

@@ -126,18 +126,13 @@
         {{ parent() }}
 
         <!--PHP Project Finder JavaScript -->
-        <script src="{{ asset('js/ProjectFinder.js') }}"></script>    
-        <!-- ============================================================== -->
-        <!-- This page plugins -->
-        <!-- ============================================================== -->
+        <script src="{{ asset('js/ProjectFinder.min.js') }}"></script>    
 
         <script type="text/javascript">
             $(document).ready(function (){
 
-                //Initialize the ProjectFinder object. Record CSRF hash/tokens for ajax requests.
-                ProjectFinder.baseUrl = "{{ path("index") }}"; //project_finder_get_project_list
-                ProjectFinder.csrfHash = "";
-                ProjectFinder.csrfToken = "";
+                //Initialize the ProjectFinder object.
+                ProjectFinder.baseUrl = "{{ path("index") }}";
                 ProjectFinder.initialize();
             });
         </script>

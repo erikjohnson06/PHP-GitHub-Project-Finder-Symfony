@@ -23,6 +23,11 @@ class GitHubProjectsRequestManagerRepository extends ServiceEntityRepository
         parent::__construct($registry, GitHubProjectsRequestManager::class);
     }
 
+    /**
+     * @param GitHubProjectsRequestManager $entity
+     * @param bool $flush
+     * @return void
+     */
     public function save(GitHubProjectsRequestManager $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
@@ -32,6 +37,11 @@ class GitHubProjectsRequestManagerRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * @param GitHubProjectsRequestManager $entity
+     * @param bool $flush
+     * @return void
+     */
     public function remove(GitHubProjectsRequestManager $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
@@ -42,31 +52,25 @@ class GitHubProjectsRequestManagerRepository extends ServiceEntityRepository
     }
 
     /**
-     * Determine the time a cURL request was performed
+     * Fetch the last time the request manager ended
      * 
      * @return string
      */
     public function getLastUpdateTime() : string {
         
         $data = "";
-        
-        try {
-            
-            $query = $this->getEntityManager()->createQuery(
-                "SELECT g.end_time  
-                FROM App\Entity\GitHubProjectsRequestManager g
-                WHERE g.end_time IS NOT NULL"
-            );
+                    
+        $query = $this->getEntityManager()->createQuery(
+            "SELECT g.end_time  
+            FROM App\Entity\GitHubProjectsRequestManager g
+            WHERE g.end_time IS NOT NULL"
+        );
 
-            $results = $query->getResult();
-            
-            //Format DateTime object, if found
-            if ($results && isset($results[0]['end_time']) && is_a($results[0]['end_time'], "DateTime")){
-                $data = $results[0]['end_time']->format("n/j/Y g:i A");
-            }
-        } 
-        catch (\Exception $ex) {
-            //$this->error_msg = "Request Manager Error: " . $ex->getMessage();
+        $results = $query->getResult();
+
+        //Format DateTime object, if found
+        if ($results && isset($results[0]['end_time']) && is_a($results[0]['end_time'], "DateTime")){
+            $data = $results[0]['end_time']->format("n/j/Y g:i A");
         }
         
         return $data;
@@ -74,37 +78,31 @@ class GitHubProjectsRequestManagerRepository extends ServiceEntityRepository
     
     
     /**
-     * Determine if another cURL request is currently underway
+     * Use the request manager to determine if another cURL request is currently underway. Return true if it is, false if not. 
      * 
      * @return boolean
      */
     public function isRequestProcessRunning(): bool {
-                
-        try {
-            
-            $query = $this->getEntityManager()->createQuery(
-                "SELECT g.is_running FROM App\Entity\GitHubProjectsRequestManager g"
-            );
+                            
+        $query = $this->getEntityManager()->createQuery(
+            "SELECT g.is_running FROM App\Entity\GitHubProjectsRequestManager g"
+        );
 
-            $results = $query->getResult();
-            
-            //It's possible that the table is empty. If so, add the required entry into the table. 
-            if (!$results || !isset($results[0])){
-                
-                $entity = new GitHubProjectsRequestManager;
-                $entity->setIsRunning(0);
-                
-                $this->save($entity, true);
-                return false;
-            }
-            
-            //Otherwise, check whether the request manager is marked as running
-            if ($results && isset($results[0]['is_running']) && $results[0]['is_running'] == 1){
-                return true;
-            }
-        } 
-        catch (\Exception $ex) {
-            //$this->error_msg = "Request Manager Error: " . $ex->getMessage();
+        $results = $query->getResult();
+
+        //It's possible that the table is empty. If so, add the required entry into the table. 
+        if (!$results || !isset($results[0])){
+
+            $entity = new GitHubProjectsRequestManager;
+            $entity->setIsRunning(0);
+
+            $this->save($entity, true);
+            return false;
+        }
+
+        //Otherwise, check whether the request manager is marked as running
+        if ($results && isset($results[0]['is_running']) && $results[0]['is_running'] == 1){
+            return true;
         }
         
         return false;
@@ -113,71 +111,40 @@ class GitHubProjectsRequestManagerRepository extends ServiceEntityRepository
     /**
      * Update the request manager table, marking start times, end times, and recording error messages
      * 
-     * @param boolean $starting_new_request
+     * @param bool $starting_new_request
      * @param string $error_msg
-     * @throws \Exception
+     * @return bool
      */
-    public function updateRequestManager($starting_new_request = false, $error_msg = "") : bool {
-                
-        try {
-            
-            $query = $this->getEntityManager()->createQuery(
-                "SELECT g FROM App\Entity\GitHubProjectsRequestManager g"
-            );
+    public function updateRequestManager(bool $starting_new_request = false, string $error_msg = "") : bool {
+                            
+        $query = $this->getEntityManager()->createQuery(
+            "SELECT g FROM App\Entity\GitHubProjectsRequestManager g"
+        );
 
-            $results = $query->getResult();
-   
-            //Otherwise, check whether the request manager is marked as running
-            if ($results && isset($results[0])){
-                $entity = $results[0];
-                
-                //Clear error message if starting
-                if ($starting_new_request){
-                    $entity->setIsRunning(1);
-                    $entity->setStartTime((new DateTime()));
-                }
-                else {
-                    $entity->setIsRunning(0);
-                    $entity->setEndTime((new DateTime()));
-                    
-                    if ($error_msg){
-                        $entity->setErrorMsg($error_msg);
-                    }
-                }
-                        
-                $this->save($entity, true);
+        $results = $query->getResult();
+
+        if ($results && isset($results[0])){
+            $entity = $results[0];
+
+            //Mark the request manager entity as "running"
+            if ($starting_new_request){
+                $entity->setIsRunning(1);
+                $entity->setStartTime((new DateTime()));
             }
-        } 
-        catch (\Exception $ex) {
-            //$this->error_msg = "Request Manager Error: " . $ex->getMessage();
+            //Otherwise, mark it as complete
+            else {
+                $entity->setIsRunning(0);
+                $entity->setEndTime((new DateTime()));
+
+                //Record any error messages upon completion
+                if ($error_msg){
+                    $entity->setErrorMsg($error_msg);
+                }
+            }
+
+            $this->save($entity, true);
         }
         
         return false;
     }
-        
-    
-//    /**
-//     * @return GitHubProjectsRequestManager[] Returns an array of GitHubProjectsRequestManager objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('g')
-//            ->andWhere('g.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('g.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?GitHubProjectsRequestManager
-//    {
-//        return $this->createQueryBuilder('g')
-//            ->andWhere('g.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }
