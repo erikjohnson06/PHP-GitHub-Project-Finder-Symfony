@@ -1,7 +1,27 @@
 index:
     path: /
     controller: App\Controller\ProjectFinderController::index
-       
+
+app_register:
+    path: /registration
+    controller: App\Controller\RegistrationController::register
+
+app_edit_profile:
+    path: /editProfile
+    controller: App\Controller\RegistrationController::editProfile
+
+app_update_password:
+    path: /updatePassword
+    controller: App\Controller\RegistrationController::updatePassword
+
+app_login:
+    path: /login
+    controller: App\Controller\SecurityController::login
+
+app_logout:
+    path: /logout
+    controller: App\Controller\SecurityController::logout
+
 project_finder_get_project_list:
     path: /getProjectList
     controller: App\Controller\ProjectFinderController::getProjectList

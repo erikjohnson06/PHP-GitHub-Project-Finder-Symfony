@@ -61,7 +61,7 @@
                 <!-- Logo -->
                 <!-- ============================================================== -->
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="index.html">
+                    <a class="navbar-brand" href="{{ path("index") }}">
                         <!-- Logo icon --><b>                            
                             <!-- Light Logo icon -->
                             <img src="{{ asset('assets/images/github_logo.png') }}" alt="logo" width=50 class="light-logo" />
@@ -91,9 +91,15 @@
                         <!-- Profile -->
                         <!-- ============================================================== -->
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <img src="{{ asset('assets/images/users/image_profile_erik.jpg') }}" alt="user" class="profile-pic m-r-10" />Erik Johnson
-                            </a>
+
+                            {% if app.user %}
+                                <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <img src="{{ asset('assets/images/users/image_profile_erik.jpg') }}" alt="user" class="profile-pic m-r-10" />{{ app.user.firstName ~ " " ~ app.user.lastName }}
+                                </a>
+                            {% else %}
+                               <a class="nav-link text-muted waves-effect waves-dark" href="{{ path('app_login') }}">Sign In</a>
+                            {% endif %}
+
                         </li>
                     </ul>
                 </div>

@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: GitHubRepositoryRecordRepository::class)]
-#[UniqueEntity('repository_id')]
+#[UniqueEntity(fields: ['repository_id'], message: 'This repository already exists')]
 class GitHubRepositoryRecord
 {
     #[ORM\Id]

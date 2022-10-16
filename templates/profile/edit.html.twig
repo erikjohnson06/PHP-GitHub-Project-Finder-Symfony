@@ -1,0 +1,128 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block stylesheets %}
+
+    {{ parent() }}
+
+    <!-- Project Finder CSS -->
+    <link href="{{ asset('css/ProjectFinder.css') }}" rel="stylesheet">
+{% endblock %}
+
+    {% block page_contents %}
+
+        <!-- ============================================================== -->
+        <!-- Container fluid  -->
+        <!-- ============================================================== -->
+        <div class="container-fluid">
+            <!-- ============================================================== -->
+            <!-- Bread crumb and right sidebar toggle -->
+            <!-- ============================================================== -->
+            <div class="row page-titles">
+                <div class="col-md-12 col-12 align-self-center">
+                    <h3 class="text-themecolor">GitHub Project Finder</h3>
+                </div>
+            </div>
+            <!-- ============================================================== -->
+            <!-- End Bread crumb and right sidebar toggle -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- Start Page Content -->
+            <!-- ============================================================== -->
+            <!-- Row -->
+            <div class="row" id="projectListContainer">
+                <!-- Column -->
+
+                <div class="col-lg-12 col-md-12">
+                    <div class="card">
+                        <div class="card-block">
+                            <div class="row">
+                                <div class="col-md-12 col-12">
+                                    <div class="d-flex flex-wrap">
+                                        <div>
+                                            <h3 class="card-title">Edit Profile</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div  class="row">
+                                <hr />
+
+                                <div class="col-12">
+                                    {% for flash_error in app.flashes('error') %}
+                                        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+
+                                    {# Add to temporarily disable HTML5 validation, {'attr': {'novalidate': 'novalidate'}} #}
+                                    {{ form_start(profileForm, {'action': path('app_edit_profile'), 'method': 'POST'}) }}
+
+                                        {{ form_row(profileForm.firstName, {
+                                            value: (userData ? userData.firstName : profileForm.firstName.vars.value)
+                                        }) }}
+
+                                        {{ form_row(profileForm.lastName, {
+                                            value: (userData ? userData.lastName : profileForm.lastName.vars.value)
+                                        }) }}
+
+                                        {{ form_row(profileForm.email, {
+                                            value: (userData ? userData.email : profileForm.email.vars.value)
+                                        }) }}
+
+                                        {{form_row(profileForm.addressCity, {
+                                            value: (userData ? userData.addressCity : profileForm.addressCity.vars.value)
+                                        }) }}
+
+                                        {{ form_row(profileForm.addressState, {
+                                            label: 'State',
+                                            value: (userData ? userData.addressState : profileForm.addressState.vars.value)
+                                        }) }}
+
+                                        {{ form_row(profileForm.addressZipCode, {
+                                            label: 'Zip Code',
+                                            value: (userData ? userData.addressZipCode : profileForm.addressZipCode.vars.value)
+                                        }) }}
+
+                                        {{ form_row(profileForm.phoneNumber, {
+                                            label: 'Phone Number',
+                                            value: (userData ? userData.phoneNumber : profileForm.phoneNumber.vars.value)
+                                        }) }}
+
+                                        {{ form_row(profileForm.dateOfBirth, {
+                                            label: 'Date of Birth',
+                                            value: (userData ? userData.dateOfBirth : profileForm.dateOfBirth.vars.value)
+                                        }) }}
+
+                                        <button type="submit" class="btn btn-default">Update</button>
+                                    {{ form_end(profileForm) }}
+                                </div>
+                            </div>
+
+                            <hr />
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <span><a href="{{ path('app_update_password') }}">Update Password</a></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Row -->
+            <!-- Row -->
+
+            <!-- ============================================================== -->
+            <!-- End Page Content -->
+            <!-- ============================================================== -->
+        </div>
+
+        <!-- ============================================================== -->
+        <!-- End Container fluid  -->
+        <!-- ============================================================== -->
+
+    {% endblock %}

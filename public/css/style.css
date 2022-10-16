@@ -6906,11 +6906,13 @@ form p:last-child {
   margin-bottom: 0; }
 
 /* Remove default checkbox */
+/*
 [type="checkbox"]:not(:checked),
 [type="checkbox"]:checked {
   position: absolute;
   left: -9999px;
   opacity: 0; }
+*/
 
 [type="checkbox"] {
   /* checkbox aspect */ }
@@ -6932,6 +6934,7 @@ form p:last-child {
   -ms-user-select: none;
   /* IE10+ */ }
 
+/*
 [type="checkbox"] + label:before,
 [type="checkbox"]:not(.filled-in) + label:after {
   content: '';
@@ -6989,7 +6992,7 @@ form p:last-child {
 [type="checkbox"]:checked:disabled + label:before {
   border-right: 2px solid rgba(0, 0, 0, 0.26);
   border-bottom: 2px solid rgba(0, 0, 0, 0.26); }
-
+*/
 /* Indeterminate checkbox */
 [type="checkbox"]:indeterminate + label:before {
   top: -11px;
@@ -7268,7 +7271,7 @@ input[type=checkbox]:not(:disabled).tabbed:focus ~ .lever::after {
   display: inline-block; }
 
 [type="checkbox"] + label {
-  padding-left: 26px;
+  padding-left: 12px;
   height: 25px;
   line-height: 21px;
   font-weight: normal; }

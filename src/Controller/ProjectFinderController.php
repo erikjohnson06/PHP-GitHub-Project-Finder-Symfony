@@ -2,14 +2,16 @@
 
 namespace App\Controller;
 
+use App\Entity\GitHubRepositoryRecord;
+use App\Entity\GitHubProjectsRequestManager;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-
-use App\Entity\GitHubRepositoryRecord;
-use App\Entity\GitHubProjectsRequestManager;
-use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 //Include custom classes for this project - the AutoLoader would be ideal here, but was not working as expected with the correct namespaces
 use App\Classes\ReturnPayload;
@@ -32,8 +34,16 @@ class ProjectFinderController extends AbstractController {
         $this->logger = $logger;
     }  
     
-    public function index(): Response
-    {        
+    public function index(Request $request): Response
+    {
+
+        //$this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        //Restrict to authenticated users only
+        if (!$this->getUser()){
+            return $this->redirectToRoute('app_login');
+        }
+
         return $this->render("project_finder.html.twig");
     }
         
